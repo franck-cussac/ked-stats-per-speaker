@@ -1,0 +1,56 @@
+apiVersion: sparkoperator.k8s.io/v1beta2
+kind: SparkApplication
+metadata:
+  name: data-ked
+  namespace: spark
+spec:
+  type: Scala
+  mode: cluster
+  sparkVersion: 3.1.1
+  image: franckcussac/data-ked:1
+  imagePullPolicy: Always
+  mainClass: ked.data.Main
+  mainApplicationFile: local:///opt/spark/work-dir/ked-speakers-results-0.0.1-SNAPSHOT-shaded.jar
+#  sparkConf:
+#    "spark.sql.shuffle.partitions": "2"
+  driver:
+    env:
+      - name: FEEDBACK_FILE
+        value: "s3a://dev-ked-kube-datalake/data/feedback"
+      - name: KED_FILE
+        value: "s3a://dev-ked-kube-datalake/data/ked"
+      - name: OUTPUT
+        value: "s3a://dev-ked-kube-datalake/data/speakers_ked_result"
+    envSecretKeyRefs:
+      AWS_ACCESS_KEY_ID:
+        key: AWS_ACCESS_KEY_ID
+        name: aws-access
+      AWS_SECRET_ACCESS_KEY:
+        key: AWS_SECRET_ACCESS_KEY
+        name: aws-access
+    cores: 1
+    coreLimit: "1200m"
+    memory: "512m"
+    hostNetwork: true
+    labels:
+      version: 3.1.1
+    serviceAccount: spark-kube
+  executor:
+    serviceAccount: spark-kube
+    env:
+      - name: FEEDBACK_FILE
+        value: "s3a://dev-ked-kube-datalake/data/feedback"
+      - name: KED_FILE
+        value: "s3a://dev-ked-kube-datalake/data/ked"
+      - name: OUTPUT
+        value: "s3a://dev-ked-kube-datalake/data/speakers_ked_result"
+    envSecretKeyRefs:
+      AWS_ACCESS_KEY_ID:
+        key: AWS_ACCESS_KEY_ID
+        name: aws-access
+      AWS_SECRET_ACCESS_KEY:
+        key: AWS_SECRET_ACCESS_KEY
+        name: aws-access
+    cores: 1
+    instances: 3
+    memory: "512m"
