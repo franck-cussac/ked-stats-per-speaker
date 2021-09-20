@@ -18,7 +18,7 @@ object Main {
 
     val feedbackAverage = feedbacks
       .groupBy("slotId")
-      .agg(avg("mark").as("average_mark"))
+      .agg(avg("mark").as("averageRating"), sum("mark").as("numberOfRatings"))
 
     val slotPerSpeakerAfterRefacto = keds
       .filter(col("year") === 2021)
@@ -53,10 +53,10 @@ object Main {
     statsPerSpeaker.coalesce(1)
       .write
       .partitionBy("speaker", "year", "month")
-      .option("header", true)
       .mode("OverWrite")
       .json(outputFile)
 
     println("Successfully run !")
+    spark.stop()
   }
 }
