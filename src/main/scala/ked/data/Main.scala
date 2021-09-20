@@ -7,12 +7,14 @@ object Main {
   def main(args: Array[String]): Unit = {
     val spark = SparkSession.builder().getOrCreate()
 
+    println(s"spark conf = ${spark.conf.getAll}")
+
     val kedFile = sys.env("KED_FILE")
     val feedbackFile = sys.env("FEEDBACK_FILE")
     val outputFile = sys.env("OUTPUT")
 
     val keds = spark.read.json(kedFile).cache()
-    val feedbacks = spark.read.json(feedbackFile)
+    val feedbacks = spark.read.json(feedbackFile).cache()
 
     val feedbackAverage = feedbacks
       .groupBy("slotId")
@@ -55,6 +57,6 @@ object Main {
       .mode("OverWrite")
       .json(outputFile)
 
-    println("Run successfully !")
+    println("Successfully run !")
   }
 }
