@@ -18,7 +18,7 @@ object Main {
 
     val feedbackAverage = feedbacks
       .groupBy("slotId")
-      .agg(avg("mark").as("averageRating"), sum("mark").as("numberOfRatings"))
+      .agg(avg("mark").as("averageRating"), count("mark").as("numberOfRatings"))
 
     val slotPerSpeakerAfterRefacto = keds
       .filter(col("year") === 2021)

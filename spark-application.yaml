@@ -32,12 +32,8 @@ spec:
     cores: 1
     coreLimit: "1200m"
     memory: "512m"
-    hostNetwork: true
-    labels:
-      version: 3.1.1
     serviceAccount: spark-kube
   executor:
-    serviceAccount: spark-kube
     env:
       - name: FEEDBACK_FILE
         value: "s3a://dev-ked-kube-datalake/data/feedback"
